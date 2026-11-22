@@ -443,6 +443,8 @@ def business_schema():
         s["foundingDate"] = str(K["sinceYear"])
     if K.get("email"):
         s["email"] = K["email"]
+    s["contactPoint"] = {"@type": "ContactPoint", "contactType": "customer service", "name": C["contactName"],
+                         "telephone": C["phoneTel"], **({"email": K["email"]} if K.get("email") else {})}
     if K.get("sameAs"):
         s["sameAs"] = K["sameAs"]
     return s
@@ -808,6 +810,7 @@ def build_contact():
       <h2 id="nap-h">{NAME}</h2>
       <dl>
         <dt>Address</dt><dd>{C["street"]}<br>{C["city"]}, {C["region"]} {C["zip"]}</dd>
+        <dt>Contact</dt><dd>{html.escape(C["contactName"])}</dd>
         <dt>Phone</dt><dd><a href="{TEL}">{PHONE}</a></dd>
         <dt>Email</dt><dd>{email}</dd>
         <dt>Shop access</dt><dd>{access_html()}</dd>
@@ -1079,6 +1082,7 @@ def build_root_files():
 ## Business facts
 - Name: {NAME}
 - Address: {ADDR_LINE}
+- Contact: {C["contactName"]}
 - Phone: {PHONE}
 - Rent online or join a waitlist: {C["rentUrl"]}
 
