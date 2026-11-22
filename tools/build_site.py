@@ -82,7 +82,7 @@ ICON = {
 
 # ---------------------------------------------------------------- towns
 # drive = fastest Google Maps route from 1781 US Highway 310, read 2026-11-21
-# (Powell, Cody, Greybull and Basin were read from the Midway Storage pin next door, 1780 US-310)
+# (Powell, Cody, Greybull and Basin were read from the map pin next door, 1780 US-310)
 TOWNS = [
     {"slug": "lovell", "name": "Lovell", "drive": "4 minutes", "mi": "2.7 miles", "short": "4 min", "road": "US-310"},
     {"slug": "cowley", "name": "Cowley", "drive": "4 minutes", "mi": "3.5 miles", "short": "4 min", "road": "US-310"},
