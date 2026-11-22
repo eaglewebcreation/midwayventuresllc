@@ -223,7 +223,7 @@ strong{color:var(--ink)}
 .photo-slot{position:relative;margin:0;aspect-ratio:4/3;display:grid;place-items:center;text-align:center;background:repeating-linear-gradient(135deg,var(--paper) 0 14px,var(--paper-2) 14px 28px);border:2px dashed #b9b8ac;color:var(--muted);padding:20px}
 .photo-slot svg{width:46px;height:46px;margin:0 auto 10px;color:var(--g2)}
 .photo-slot strong{display:block;color:var(--ink);font-family:var(--head);font-stretch:110%}
-.photo-pair{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.photo-pair{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
 .photo-pair .photo-slot:last-child{aspect-ratio:3/4}
 @media (max-width:560px){.photo-pair{grid-template-columns:1fr}.photo-pair .photo-slot:last-child{aspect-ratio:4/3}}
 
