@@ -67,31 +67,48 @@ def icons(icon):
     flat.save(OUT / "logo-640.png", optimize=True)
 
 
-def share_image():
-    """1200x630 link preview: the logo on white over a deep-green band with the shop's size."""
+PHOTO_WIDTHS = (480, 768, 1152)
+
+
+def shop_photo():
+    """Owner's photo of the shop front (door open). 3:4, never cropped; WebP plus JPG fallback per width."""
+    src = Image.open(SRC / "shop-front.jpg").convert("RGB")
+    for w in PHOTO_WIDTHS:
+        h = round(w * src.height / src.width)
+        r = src.resize((w, h), Image.LANCZOS)
+        r.save(OUT / f"shop-front-{w}.webp", "WEBP", quality=78, method=6)
+        r.save(OUT / f"shop-front-{w}.jpg", "JPEG", quality=80, optimize=True, progressive=True)
+    return src
+
+
+def share_image(photo):
+    """1200x630 link preview: logo and the shop's size on the left, the whole shop photo on the right."""
     W, H = 1200, 630
     im = Image.new("RGB", (W, H), (255, 255, 255))
     d = ImageDraw.Draw(im)
+    pw = round(H * photo.width / photo.height)  # full photo, no crop
+    left = W - pw
     # three slanted bands down the left edge, echoing the logo
     greens = [(15, 60, 15), (24, 97, 24), (34, 139, 34)]
     for i, g in enumerate(greens):
-        x = i * 46
-        d.polygon([(x + 60, 0), (x + 106, 0), (x + 46, 410), (x, 410)], fill=g)
-    lg = svg_png((OUT / "logo.svg").read_text(), 1900)
-    lg.thumbnail((940, 400), Image.LANCZOS)
-    im.paste(lg, (190, 150), lg)
-    d.rectangle([0, 410, W, H], fill=DEEP)
+        x = i * 40
+        d.polygon([(x + 52, 0), (x + 92, 0), (x + 40, 410), (x, 410)], fill=g)
+    lg = svg_png((OUT / "logo.svg").read_text(), 1600)
+    lg.thumbnail((left - 200, 300), Image.LANCZOS)
+    im.paste(lg, (165, 205 - lg.height // 2), lg)
+    d.rectangle([0, 410, left, H], fill=DEEP)
     for i, g in enumerate(greens):
-        d.rectangle([0, 410 + i * 4, W, 410 + i * 4 + 4], fill=g)
-    big = ImageFont.truetype("/usr/share/fonts/opentype/inter/InterDisplay-Black.otf", 62)
-    small = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf", 32)
-    d.text((70, 458), "Heated shop for rent", font=big, fill=(255, 255, 255))
-    d.text((72, 545), "36 x 45 ft  ·  16 ft ceiling  ·  bathroom + office", font=small, fill=(196, 226, 190))
+        d.rectangle([0, 410 + i * 4, left, 410 + i * 4 + 4], fill=g)
+    big = ImageFont.truetype("/usr/share/fonts/opentype/inter/InterDisplay-Black.otf", 56)
+    small = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-SemiBold.otf", 25)
+    d.text((56, 456), "Heated shop for rent", font=big, fill=(255, 255, 255))
+    d.text((58, 540), "36 x 45 ft  ·  16 ft ceiling  ·  bathroom + office", font=small, fill=(196, 226, 190))
+    im.paste(photo.resize((pw, H), Image.LANCZOS), (left, 0))
+    d.rectangle([left - 4, 0, left - 1, H], fill=greens[2])
     im.save(OUT / "share-1200x630.jpg", "JPEG", quality=86, optimize=True, progressive=True)
-
 
 if __name__ == "__main__":
     logo, icon = logos()
     icons(icon)
-    share_image()
+    share_image(shop_photo())
     print("images built")

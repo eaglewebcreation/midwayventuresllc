@@ -383,7 +383,7 @@ def business_schema():
         "name": NAME,
         "url": SITE + "/",
         "logo": SITE + "/assets/img/logo-640.png",
-        "image": SITE + "/assets/img/share-1200x630.jpg",
+        "image": [SITE + "/assets/img/shop-front-1152.jpg", SITE + "/assets/img/share-1200x630.jpg"],
         "description": f'Rents a heated {S["w"]} x {S["d"]} ft shop with {S["h"]}-foot ceilings, a private bathroom '
                        f'and a private office on US-310 just west of Lovell, Wyoming. Rent online.',
         "telephone": C["phoneTel"],
@@ -471,7 +471,7 @@ def page(path, title, desc, body, *, current=None, schema=(), noindex=False):
 <meta property="og:image" content="{og}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="{NAME} logo: heated shop for rent, 36 by 45 feet with a 16 foot ceiling">
+<meta property="og:image:alt" content="{NAME} logo beside a photo of the heated 36 by 45 foot shop with its overhead door open">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{t}">
 <meta name="twitter:description" content="{d}">
@@ -495,6 +495,19 @@ def page(path, title, desc, body, *, current=None, schema=(), noindex=False):
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(doc)
     return path
+
+
+PHOTO_ALT = "Heated shop for rent at Midway Ventures with the overhead door open, looking in at the empty concrete floor"
+
+
+def shop_photo(sizes, caption="The shop with its overhead door open"):
+    """Owner's photo, 3:4, lazy loaded, WebP with a JPG fallback (files from tools/build_images.py)."""
+    ws = (480, 768, 1152)
+    webp = ", ".join(f"/assets/img/shop-front-{w}.webp {w}w" for w in ws)
+    jpg = ", ".join(f"/assets/img/shop-front-{w}.jpg {w}w" for w in ws)
+    return (f'<figure class="shop-photo"><picture><source type="image/webp" srcset="{webp}" sizes="{sizes}">'
+            f'<img src="/assets/img/shop-front-768.jpg" srcset="{jpg}" sizes="{sizes}" width="1152" height="1536" '
+            f'alt="{PHOTO_ALT}" loading="lazy" decoding="async"></picture><figcaption>{caption}</figcaption></figure>')
 
 
 def photo_slot(what):
@@ -613,7 +626,7 @@ def build_home():
     </div>
     <div class="photo-pair">
       {photo_slot("The shop from the outside")}
-      {photo_slot("Inside the shop")}
+      {shop_photo("(max-width: 560px) 92vw, (max-width: 900px) 45vw, 300px")}
     </div>
   </div>
 </section>
@@ -714,7 +727,7 @@ def build_shop():
 <section class="section" aria-labelledby="photos-h">
   <div class="wrap">
     <div class="section-head"><h2 id="photos-h">Photos</h2></div>
-    <div class="grid g3">{photo_slot("Outside and the main door")}{photo_slot("The shop floor")}{photo_slot("Bathroom and office")}</div>
+    <div class="photo-feature">{shop_photo("(max-width: 640px) 92vw, 560px")}<div class="photo-stack">{photo_slot("The shop floor")}{photo_slot("Bathroom and office")}</div></div>
   </div>
 </section>
 {price_band()}

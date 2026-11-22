@@ -360,3 +360,9 @@ strong{color:var(--ink)}
 @media (prefers-reduced-motion:reduce){.iso .rooms,.iso .doors{animation:none}}
 .iso .door-open{fill:rgba(232,122,30,.08);stroke:var(--heat);stroke-width:1.4;stroke-dasharray:4 3;animation:fade 1s ease 1.3s both}
 @media (prefers-reduced-motion:reduce){.iso .door-open{animation:none}}
+.shop-photo{margin:0}
+.shop-photo img{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;background:var(--paper-2)}
+.shop-photo figcaption{margin-top:8px;font-size:.9rem;color:var(--muted)}
+.photo-feature{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start}
+.photo-stack{display:grid;gap:22px}
+@media (max-width:640px){.photo-feature{grid-template-columns:1fr}}
