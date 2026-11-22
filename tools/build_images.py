@@ -70,14 +70,15 @@ def icons(icon):
 PHOTO_WIDTHS = (480, 768, 1152)
 
 
-def shop_photo():
-    """Owner's photo of the shop front (door open). 3:4, never cropped; WebP plus JPG fallback per width."""
-    src = Image.open(SRC / "shop-front.jpg").convert("RGB")
+def shop_photo(name="shop-front"):
+    """An owner's photo (shop-front: door open; office-bath: inside, office and bathroom block).
+    3:4, never cropped or edited; WebP plus JPG fallback per width."""
+    src = Image.open(SRC / f"{name}.jpg").convert("RGB")
     for w in PHOTO_WIDTHS:
         h = round(w * src.height / src.width)
         r = src.resize((w, h), Image.LANCZOS)
-        r.save(OUT / f"shop-front-{w}.webp", "WEBP", quality=78, method=6)
-        r.save(OUT / f"shop-front-{w}.jpg", "JPEG", quality=80, optimize=True, progressive=True)
+        r.save(OUT / f"{name}-{w}.webp", "WEBP", quality=78, method=6)
+        r.save(OUT / f"{name}-{w}.jpg", "JPEG", quality=80, optimize=True, progressive=True)
     return src
 
 
@@ -111,4 +112,5 @@ if __name__ == "__main__":
     logo, icon = logos()
     icons(icon)
     share_image(shop_photo())
+    shop_photo("office-bath")
     print("images built")

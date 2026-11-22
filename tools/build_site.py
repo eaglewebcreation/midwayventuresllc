@@ -155,7 +155,7 @@ def iso_svg():
     walls = (f'<polygon class="wall" points="{pts((0, 0, 0), (W, 0, 0), (W, 0, H), (0, 0, H))}"/>'
              f'<polygon class="wall" points="{pts((0, 0, 0), (0, D, 0), (0, D, H), (0, 0, H))}"/>')
     floor = f'<polygon class="floor" points="{pts((0, 0, 0), (W, 0, 0), (W, D, 0), (0, D, 0))}"/>'
-    # pickup: about 6.7 ft wide, 19.5 ft long, cab 6.3 ft tall
+    # pickup: regular-cab full-size, 6.7 ft wide, 17.4 ft long, 6.25 ft tall (see below)
     # Office, bathroom and closet footprints and the two doors, placed from the floor plan:
     # office 10x10 in the front corner, bathroom 5x5 and closet behind it, walk-in door next to
     # the office, 12 ft main door further along the front wall. Wall heights inside aren't on the plan,
@@ -174,17 +174,44 @@ def iso_svg():
     doors = ('<g class="doors">' + door_line(dx0, dx1, "door-main") + door_line(10.3, 13.3, "door-walk")
              + lbl(27, D - 4.2, "15 FT DOOR") + "</g>")
     opening = f'<polygon class="door-open" points="{pts((dx0, D, 0), (dx1, D, 0), (dx1, D, dz), (dx0, D, dz))}"/>' 
-    tx0, tx1, ty0, ty1 = 22.0, 28.7, 20.0, 39.5
-    truck = (f'<g class="truck">{box(tx0, tx1, ty0, ty1, 0.9, 3.9)}{box(tx0 + .2, tx1 - .2, 28.0, 34.5, 3.9, 6.3)}'
+    # regular-cab full-size pickup: 6.7 ft wide, 17.4 ft long, 6.25 ft tall, centered on the door opening
+    tx0, tx1 = 27 - 3.35, 27 + 3.35
+    yf = 39.0                      # front bumper, about 6 ft inside the door
+    yb, yc, yh = yf - 17.4, yf - 10.4, yf - 5.4   # rear of bed, back of cab, front of cab
+    bed_pts = pts((tx0 + .35, yb + .35, 3.9), (tx1 - .35, yb + .35, 3.9), (tx1 - .35, yc - .2, 3.9), (tx0 + .35, yc - .2, 3.9))
+    bed_in = f'<polygon class="truck-bed" points="{bed_pts}"/>'
+    truck = (f'<g class="truck">{box(tx0, tx1, yb, yc, 1.0, 3.9)}{bed_in}{box(tx0, tx1, yc, yh, 1.0, 6.25)}'
+             f'{box(tx0, tx1, yh, yf, 1.0, 3.7)}'
              + "".join(f'<ellipse cx="{P(tx1, wy, 1.1)[0]:.1f}" cy="{P(tx1, wy, 1.1)[1]:.1f}" rx="7" ry="9" fill="#2a2e2a" transform="rotate(-30 {P(tx1, wy, 1.1)[0]:.1f} {P(tx1, wy, 1.1)[1]:.1f})"/>'
-                       for wy in (23.5, 36.0)) + "</g>")
+                       for wy in (yb + 3.2, yf - 3.3)) + "</g>")
     px, py = P(15, 39)
     ph_ = 5.83 * s
     person = (f'<g class="person"><rect x="{px - 3.6:.1f}" y="{py - ph_ + 7.5:.1f}" width="7.2" height="{ph_ - 7.5:.1f}" rx="3.2"/>'
               f'<circle cx="{px:.1f}" cy="{py - ph_ + 3.4:.1f}" r="3.6"/></g>')
-    hx, hy = P(13, 15)
-    heat = '<g class="heat">' + "".join(
-        f'<path d="M{hx + dx:.1f} {hy - 6:.1f} c-6 -8 6 -14 0 -22 s6 -14 0 -22"/>' for dx in (-14, 0, 14)) + "</g>"
+    # ceiling-hung natural gas unit heater in the back corner: about 3.5 ft wide, 2.4 ft deep, 2.2 ft tall,
+    # hung about 11.5 ft up with its flue going up through the roof and warm air out of the front louvers
+    hx0, hx1, hy0, hy1, hz0, hz1 = 3.0, 6.5, 0.6, 3.0, 11.6, 13.8
+
+    def hface(cls, *ps):
+        return f'<polygon class="{cls}" points="{pts(*ps)}"/>'
+    hm = (hx0 + hx1) / 2
+    fx, fy0 = P(hm, (hy0 + hy1) / 2, hz1)
+    _, fy1 = P(hm, (hy0 + hy1) / 2, H)
+    louvers = "".join(
+        f'<line x1="{P(hx0 + .35, hy1, z)[0]:.1f}" y1="{P(hx0 + .35, hy1, z)[1]:.1f}" '
+        f'x2="{P(hx1 - .35, hy1, z)[0]:.1f}" y2="{P(hx1 - .35, hy1, z)[1]:.1f}"/>'
+        for z in (12.0, 12.45, 12.9, 13.35))
+
+    def air(x):
+        (a0, b0), (a1, b1), (a2, b2) = P(x, hy1 + .4, 12.6), P(x + .8, hy1 + 4, 12.6), P(x, hy1 + 8, 9.8)
+        return f'<path d="M{a0:.1f} {b0:.1f} Q{a1:.1f} {b1:.1f} {a2:.1f} {b2:.1f}"/>'
+    heat = ('<g class="heater">'
+            f'<line class="flue" x1="{fx:.1f}" y1="{fy0:.1f}" x2="{fx:.1f}" y2="{fy1:.1f}"/>'
+            + hface("hb-side", (hx1, hy0, hz0), (hx1, hy1, hz0), (hx1, hy1, hz1), (hx1, hy0, hz1))
+            + hface("hb-front", (hx0, hy1, hz0), (hx1, hy1, hz0), (hx1, hy1, hz1), (hx0, hy1, hz1))
+            + hface("hb-top", (hx0, hy0, hz1), (hx1, hy0, hz1), (hx1, hy1, hz1), (hx0, hy1, hz1))
+            + f'<g class="louvers">{louvers}</g></g>'
+            + '<g class="heat">' + "".join(air(x) for x in (hx0 + .7, hm, hx1 - .7)) + "</g>")
     edges = (f'<path class="edge draw" pathLength="1" d="{path((0, 0, 0), (W, 0, 0), (W, D, 0), (0, D, 0))}"/>'
              f'<path class="edge draw d2" pathLength="1" d="M{P(0, 0, 0)[0]:.1f} {P(0, 0, 0)[1]:.1f} V{P(0, 0, H)[1]:.1f} M{P(W, 0, 0)[0]:.1f} {P(W, 0, 0)[1]:.1f} V{P(W, 0, H)[1]:.1f} M{P(W, D, 0)[0]:.1f} {P(W, D, 0)[1]:.1f} V{P(W, D, H)[1]:.1f} M{P(0, D, 0)[0]:.1f} {P(0, D, 0)[1]:.1f} V{P(0, D, H)[1]:.1f}"/>'
              f'<path class="edge draw d3" pathLength="1" d="{path((0, 0, H), (W, 0, H), (W, D, H), (0, D, H))}"/>')
@@ -203,7 +230,7 @@ def iso_svg():
             + "</g>")
     label = (f"Drawing to scale of the Midway Ventures shop: {W} feet wide, {D} feet deep and {H} feet tall, "
              f"with the {S['office']} office and {S['bath']} bathroom in a front corner, the overhead door about {S['mainDoorW']} wide and nearly 15 feet tall, "
-             "a full-size pickup and a person about 5 feet 10 inches tall")
+             "a gas heater hung from the ceiling in a back corner, a full-size pickup and a person about 5 feet 10 inches tall")
     return (f'<svg class="iso" viewBox="0 0 580 470" role="img" aria-label="{label}">'
             f'{walls}{floor}{rooms}{doors}{heat}{truck}{person}{opening}{edges}{dims}</svg>')
 
@@ -500,14 +527,17 @@ def page(path, title, desc, body, *, current=None, schema=(), noindex=False):
 PHOTO_ALT = "Heated shop for rent at Midway Ventures with the overhead door open, looking in at the empty concrete floor"
 
 
-def shop_photo(sizes, caption="The shop with its overhead door open"):
+OFFICE_ALT = "Inside the heated shop showing the private office and bathroom, with the gas furnace and spray-foam ceiling"
+
+
+def shop_photo(sizes, caption="The shop with its overhead door open", name="shop-front", alt=PHOTO_ALT):
     """Owner's photo, 3:4, lazy loaded, WebP with a JPG fallback (files from tools/build_images.py)."""
     ws = (480, 768, 1152)
-    webp = ", ".join(f"/assets/img/shop-front-{w}.webp {w}w" for w in ws)
-    jpg = ", ".join(f"/assets/img/shop-front-{w}.jpg {w}w" for w in ws)
+    webp = ", ".join(f"/assets/img/{name}-{w}.webp {w}w" for w in ws)
+    jpg = ", ".join(f"/assets/img/{name}-{w}.jpg {w}w" for w in ws)
     return (f'<figure class="shop-photo"><picture><source type="image/webp" srcset="{webp}" sizes="{sizes}">'
-            f'<img src="/assets/img/shop-front-768.jpg" srcset="{jpg}" sizes="{sizes}" width="1152" height="1536" '
-            f'alt="{PHOTO_ALT}" loading="lazy" decoding="async"></picture><figcaption>{caption}</figcaption></figure>')
+            f'<img src="/assets/img/{name}-768.jpg" srcset="{jpg}" sizes="{sizes}" width="1152" height="1536" '
+            f'alt="{alt}" loading="lazy" decoding="async"></picture><figcaption>{caption}</figcaption></figure>')
 
 
 def photo_slot(what):
@@ -727,7 +757,7 @@ def build_shop():
 <section class="section" aria-labelledby="photos-h">
   <div class="wrap">
     <div class="section-head"><h2 id="photos-h">Photos</h2></div>
-    <div class="photo-feature">{shop_photo("(max-width: 640px) 92vw, 560px")}<div class="photo-stack">{photo_slot("The shop floor")}{photo_slot("Bathroom and office")}</div></div>
+    <div class="photo-feature">{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px")}{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px", caption="The private office and bathroom inside the shop", name="office-bath", alt=OFFICE_ALT)}{photo_slot("The shop floor")}</div>
   </div>
 </section>
 {price_band()}
