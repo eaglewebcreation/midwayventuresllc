@@ -113,4 +113,5 @@ if __name__ == "__main__":
     icons(icon)
     share_image(shop_photo())
     shop_photo("office-bath")
+    shop_photo("floor-drain")
     print("images built")

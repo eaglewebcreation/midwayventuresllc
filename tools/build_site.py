@@ -537,6 +537,7 @@ def page(path, title, desc, body, *, current=None, schema=(), noindex=False):
 PHOTO_ALT = "Heated shop for rent at Midway Ventures with the overhead door open, looking in at the empty concrete floor"
 
 
+DRAIN_ALT = "Floor drain with a square steel grate in the heated shop's concrete floor"
 OFFICE_ALT = "Inside the heated shop showing the private office and bathroom, with the gas furnace and spray-foam ceiling"
 
 
@@ -746,7 +747,7 @@ def build_shop():
     <div>
       <h2 id="draw-h">How big {SQFT:,} square feet really is</h2>
       <p>The drawing is to scale. A full-size pickup takes up a small corner of the floor, and a person standing inside barely reaches a third of the way to the ceiling.</p>
-      <p>The office, bathroom and closet sit together in one front corner, next to the walk-in door, which leaves the rest of the floor open. Photos are coming.</p>
+      <p>The office, bathroom and closet sit together in one front corner, next to the walk-in door, which leaves the rest of the floor open.</p>
       <div class="btn-row"><a class="btn btn-green" href="{RENT}">{RENT_LABEL}</a></div>
     </div>
     {sheet()}
@@ -767,7 +768,7 @@ def build_shop():
 <section class="section" aria-labelledby="photos-h">
   <div class="wrap">
     <div class="section-head"><h2 id="photos-h">Photos</h2></div>
-    <div class="photo-feature">{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px")}{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px", caption="The private office and bathroom inside the shop", name="office-bath", alt=OFFICE_ALT)}{photo_slot("The shop floor")}</div>
+    <div class="photo-feature">{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px")}{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px", caption="The private office and bathroom inside the shop", name="office-bath", alt=OFFICE_ALT)}{shop_photo("(max-width: 640px) 92vw, (max-width: 900px) 45vw, 380px", caption="The floor drain in the concrete floor", name="floor-drain", alt=DRAIN_ALT)}</div>
   </div>
 </section>
 {price_band()}
