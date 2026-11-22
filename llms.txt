@@ -9,14 +9,14 @@
 - Heated: yes, overhead natural gas forced-air furnace
 - Utilities included: Water, sewer and trash
 - Water spigot and floor drain: yes
-- Power: 220V outlet
+- Power: One 220V outlet, standard 110V outlets for the rest
 - Private bathroom: yes
 - Private office: yes
 - Base rent: $1,250 per month before payment fees (the rental page adds about 1.75% for ACH or about 4% for card)
 - Status at last check: open to rent
 - Office size: 10 × 10 ft
-- Access hours: not published yet
-- Lease term: not published yet
+- Access hours: 24-hour access
+- Lease term: 12-month lease
 
 ## Business facts
 - Name: Midway Ventures LLC
