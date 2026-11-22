@@ -155,6 +155,16 @@ def iso_svg():
     walls = (f'<polygon class="wall" points="{pts((0, 0, 0), (W, 0, 0), (W, 0, H), (0, 0, H))}"/>'
              f'<polygon class="wall" points="{pts((0, 0, 0), (0, D, 0), (0, D, H), (0, 0, H))}"/>')
     floor = f'<polygon class="floor" points="{pts((0, 0, 0), (W, 0, 0), (W, D, 0), (0, D, 0))}"/>'
+    # floor drain: a square steel grate (about 1.5 ft) set flush where the slab's control joints cross mid-floor
+    jx, jy, g = W / 2, D / 2, 0.75
+    joints = (f'<g class="joints"><line x1="{P(jx, 0)[0]:.1f}" y1="{P(jx, 0)[1]:.1f}" x2="{P(jx, D)[0]:.1f}" y2="{P(jx, D)[1]:.1f}"/>'
+              f'<line x1="{P(0, jy)[0]:.1f}" y1="{P(0, jy)[1]:.1f}" x2="{P(W, jy)[0]:.1f}" y2="{P(W, jy)[1]:.1f}"/></g>')
+    bars = "".join(
+        f'<line x1="{P(jx - g + k, jy - g)[0]:.1f}" y1="{P(jx - g + k, jy - g)[1]:.1f}" x2="{P(jx - g + k, jy + g)[0]:.1f}" y2="{P(jx - g + k, jy + g)[1]:.1f}"/>'
+        f'<line x1="{P(jx - g, jy - g + k)[0]:.1f}" y1="{P(jx - g, jy - g + k)[1]:.1f}" x2="{P(jx + g, jy - g + k)[0]:.1f}" y2="{P(jx + g, jy - g + k)[1]:.1f}"/>'
+        for k in (0.3, 0.6, 0.9, 1.2))
+    drain = (f'<g class="drain"><polygon points="{pts((jx - g, jy - g, 0), (jx + g, jy - g, 0), (jx + g, jy + g, 0), (jx - g, jy + g, 0))}"/>'
+             f'{bars}</g>')
     # pickup: regular-cab full-size, 6.7 ft wide, 17.4 ft long, 6.25 ft tall (see below)
     # Office, bathroom and closet footprints and the two doors, placed from the floor plan:
     # office 10x10 in the front corner, bathroom 5x5 and closet behind it, walk-in door next to
@@ -230,9 +240,9 @@ def iso_svg():
             + "</g>")
     label = (f"Drawing to scale of the Midway Ventures shop: {W} feet wide, {D} feet deep and {H} feet tall, "
              f"with the {S['office']} office and {S['bath']} bathroom in a front corner, the overhead door about {S['mainDoorW']} wide and nearly 15 feet tall, "
-             "a gas heater hung from the ceiling in a back corner, a full-size pickup and a person about 5 feet 10 inches tall")
+             "a gas heater hung from the ceiling in a back corner, a floor drain in the middle of the floor, a full-size pickup and a person about 5 feet 10 inches tall")
     return (f'<svg class="iso" viewBox="0 0 580 470" role="img" aria-label="{label}">'
-            f'{walls}{floor}{rooms}{doors}{heat}{truck}{person}{opening}{edges}{dims}</svg>')
+            f'{walls}{floor}{joints}{drain}{rooms}{doors}{heat}{truck}{person}{opening}{edges}{dims}</svg>')
 
 
 def status_html(cls=""):
@@ -655,7 +665,7 @@ def build_home():
       {inside_list()}
     </div>
     <div class="photo-pair">
-      {photo_slot("The shop from the outside")}
+      {shop_photo("(max-width: 560px) 92vw, (max-width: 900px) 45vw, 380px", caption="The private office and bathroom inside the shop", name="office-bath", alt=OFFICE_ALT)}
       {shop_photo("(max-width: 560px) 92vw, (max-width: 900px) 45vw, 300px")}
     </div>
   </div>
