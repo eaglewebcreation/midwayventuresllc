@@ -124,7 +124,7 @@ def iso_svg():
     """Isometric line drawing of the 36 x 45 x 16 ft shop, to scale, with a 5 ft 10 in person and
     a full-size pickup for scale. Bathroom and office are not drawn: their layout isn't known."""
     s, c = 7.0, 0.8660254
-    ox, oy = 313.0, 142.0
+    ox, oy = 292.0, 142.0
     W, D, H = S["w"], S["d"], S["h"]
 
     def P(x, y, z=0):
@@ -173,7 +173,7 @@ def iso_svg():
             + dim((0, D, 0), (W, D, 0), f"{W} FT WIDE", (-16, 26), 30)
             + dim((W, 0, 0), (W, D, 0), f"{D} FT DEEP", (18, 26), -30)
             + f'<line x1="{P(W, 0, 0)[0] + 12:.1f}" y1="{P(W, 0, 0)[1]:.1f}" x2="{P(W, 0, H)[0] + 12:.1f}" y2="{P(W, 0, H)[1]:.1f}"/>'
-            + f'<text x="{P(W, 0, H / 2)[0] + 20:.1f}" y="{P(W, 0, H / 2)[1] + 5:.1f}">{H} FT</text>'
+            + f'<text x="{P(W, 0, H / 2)[0] + 18:.1f}" y="{P(W, 0, H / 2)[1] + 5:.1f}">{H} FT</text>'
             + "</g>")
     label = (f"Drawing to scale of the Midway Ventures shop: {W} feet wide, {D} feet deep and {H} feet tall inside, "
              "shown next to a full-size pickup and a person about 5 feet 10 inches tall")
@@ -195,7 +195,7 @@ def sheet():
   <div class="sheet-top"><span class="sheet-title">Shop &middot; {S["w"]} &times; {S["d"]} &times; {S["h"]} ft &middot; heated</span>{status_html()}</div>
   {iso_svg()}
   <figcaption class="sheet-foot">
-    <p class="sheet-price"><strong>${S["rent"]}<span class="visually-hidden"> per month</span></strong>a month, before card or ACH payment fees</p>
+    <p class="sheet-price"><strong>${S["rent"]}</strong> a month, before card or ACH payment fees</p>
     <p class="sheet-key">Drawn to scale with a full-size pickup<br>and a 5&prime;10&Prime; person</p>
   </figcaption>
 </figure>'''
@@ -263,7 +263,7 @@ def footer():
   </div>
   <div class="wrap footer-bottom">
     <span>&copy; {YEAR} {NAME}</span>
-    <span>Built by <a href="https://eaglewebcreation.com/">Eagle Web Creations</a></span>
+    <span>Built by <a href="https://eaglewebcreation.com/">Eagle Web Creation</a></span>
   </div>
 </footer>
 <nav class="mobile-bar" aria-label="Quick actions">
@@ -552,7 +552,7 @@ def build_home():
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <span class="kicker">Shop space for rent &middot; US-310</span>
-      <h1 id="hero-h">A heated {S["w"]} &times; {S["d"]} shop <span class="accent">with its own bathroom and office</span></h1>
+      <h1 id="hero-h">A heated {S["w"]}&nbsp;&times;&nbsp;{S["d"]} shop <span class="accent">with its own bathroom and office</span></h1>
       <p class="hero-sub">{SQFT:,} square feet of open floor under a {S["h"]}-foot ceiling. Room for the trucks, the tools and the project you&rsquo;ve been putting off, and warm enough to work in all winter.</p>
       <div class="btn-row"><a class="btn btn-green" href="{RENT}">{ICON["key"]}{RENT_LABEL}</a><a class="btn btn-line" href="/the-shop/">See the details</a></div>
       <ul class="hero-points"><li>Heated</li><li>{S["h"]} ft ceilings</li><li>Rent online</li></ul>
@@ -648,7 +648,7 @@ def build_shop():
         ("Address", ADDR_LINE),
     ]
     table = "".join(f'<tr><th scope="row">{a}</th><td>{b}</td></tr>' for a, b in rows)
-    body = f'''{page_hero("The shop", f"A heated {S['w']} &times; {S['d']} shop with a bathroom and office", f"Everything we know about the shop at {C['street']}: size, features, price and how to rent it.", trail, mark=f"{S['w']}&times;{S['d']}")}
+    body = f'''{page_hero("The shop", f"A heated {S['w']}&nbsp;&times;&nbsp;{S['d']} shop with a bathroom and office", f"Everything we know about the shop at {C['street']}: size, features, price and how to rent it.", trail, mark=f"{S['w']}&times;{S['d']}")}
 <section class="section" aria-labelledby="draw-h">
   <div class="wrap split">
     <div>

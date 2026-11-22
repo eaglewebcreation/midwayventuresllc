@@ -1,7 +1,7 @@
 # Midway Ventures LLC website
 
 Static site for Midway Ventures LLC: one heated 36 x 45 ft shop for rent on US-310 just west of Lovell, WY.
-Built by Eagle Web Creations. Plain HTML/CSS/JS, deployed to Hostinger from Git.
+Built by Eagle Web Creation. Plain HTML/CSS/JS, deployed to Hostinger from Git.
 
 ## Branches
 - `main`: source plus the production build in `public/`.
