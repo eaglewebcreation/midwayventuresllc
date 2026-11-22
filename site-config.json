@@ -1,0 +1,42 @@
+{
+  "_note": "Owner facts for the Midway Ventures LLC site. Edit here, then run python3 tools/build_site.py. Shop size, price and status were read from the CCStorage rental page on 2026-11-21.",
+  "siteUrl": "https://midwayventures.eaglewebcreation.com",
+  "prodHost": null,
+  "name": "Midway Ventures LLC",
+  "shortName": "Midway Ventures",
+  "phoneDisplay": "(307) 272-7444",
+  "phoneTel": "+13072727444",
+  "street": "1781 US Highway 310",
+  "city": "Lovell",
+  "region": "WY",
+  "zip": "82431",
+  "rentUrl": "https://midwayventuresllc.ccstorage.com/find_units/loc_b07c6c20aebd052257591ce9104c7cea",
+  "signInUrl": "https://midwayventuresllc.ccstorage.com/session/new",
+  "pricesAsOf": "November 2026",
+  "shop": {
+    "w": 36,
+    "d": 45,
+    "h": 16,
+    "rent": "1,250",
+    "card": "1,299.88",
+    "ach": "1,271.88",
+    "status": "rent",
+    "ccstorageTypeId": "sut_79fc62e42b027741d8a8c5c8484f78e5"
+  },
+  "CONFIRM": {
+    "_note": "null = not confirmed by the owner yet; the site shows a visible placeholder or an HTML TODO.",
+    "email": null,
+    "sinceYear": null,
+    "officeSize": null,
+    "doorSize": null,
+    "power": null,
+    "heatType": null,
+    "accessHours": null,
+    "leaseTerm": null,
+    "allowedUses": null,
+    "sameAs": null,
+    "googleSiteVerification": null,
+    "bingSiteVerification": null,
+    "ga4MeasurementId": null
+  }
+}

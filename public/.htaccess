@@ -1,0 +1,55 @@
+# Midway Ventures LLC - Hostinger (LiteSpeed/Apache) config. Lives in public_html/.
+
+ErrorDocument 404 /404.html
+DirectoryIndex index.html
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Force HTTPS and drop "www." on whatever host was requested (works on the preview subdomain too)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L,NE]
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L,NE]
+
+# No real domain yet, so every host gets noindex. When the domain goes live, change this to
+#   RewriteCond %{HTTP_HOST} !^thedomain\.com$ [NC]
+#   RewriteRule ^ - [E=NOINDEX_HOST:1]
+RewriteRule ^ - [E=NOINDEX_HOST:1]
+
+# Add the trailing slash to folder pages (/faq -> /faq/)
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*[^/])$ /$1/ [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+Header always set X-Robots-Tag "noindex, nofollow" env=NOINDEX_HOST
+Header always set X-Robots-Tag "noindex, nofollow" env=REDIRECT_NOINDEX_HOST
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-Frame-Options "SAMEORIGIN"
+<FilesMatch "\.(woff2)$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+<FilesMatch "\.(webp|jpg|jpeg|png|ico|svg)$">
+  Header set Cache-Control "public, max-age=2592000"
+</FilesMatch>
+<FilesMatch "\.(js|css)$">
+  Header set Cache-Control "public, max-age=86400"
+</FilesMatch>
+<FilesMatch "\.(html|xml|txt)$">
+  Header set Cache-Control "public, max-age=0, must-revalidate"
+</FilesMatch>
+</IfModule>
+
+<IfModule mod_mime.c>
+AddType font/woff2 .woff2
+AddType image/webp .webp
+AddType image/svg+xml .svg
+AddType application/manifest+json .webmanifest
+</IfModule>
+
+<IfModule mod_deflate.c>
+AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json application/xml text/plain image/svg+xml application/manifest+json
+</IfModule>

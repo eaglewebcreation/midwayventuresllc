@@ -1,0 +1,86 @@
+name: Sync shop availability from CCStorage
+
+# Once an hour, read the public CCStorage rental page. If the shop switched between
+# "Rent Now" and "Join Waiting List", update site-config.json, rebuild, and push both the
+# production build (main) and the noindexed preview build (preview branch).
+# If a page can't be read, nothing changes and this run fails, so the site keeps its last label.
+
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-availability
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read CCStorage (plain fetch)
+        id: plain
+        continue-on-error: true
+        run: python3 tools/sync_availability.py
+
+      - name: Read CCStorage (headless browser fallback)
+        id: browser
+        if: steps.plain.outcome == 'failure'
+        run: |
+          pip install -q playwright==1.48.0
+          python3 -m playwright install --with-deps chromium
+          python3 tools/sync_availability.py
+
+      - name: Note which read worked
+        id: sync
+        run: |
+          if [ "${{ steps.plain.outcome }}" = "success" ]; then
+            echo "changed=${{ steps.plain.outputs.changed }}" >> "$GITHUB_OUTPUT"
+            echo "summary=${{ steps.plain.outputs.summary }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=${{ steps.browser.outputs.changed }}" >> "$GITHUB_OUTPUT"
+            echo "summary=${{ steps.browser.outputs.summary }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out the preview branch
+        if: steps.sync.outputs.changed == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: preview
+          path: preview-out
+
+      - name: Rebuild and push
+        if: steps.sync.outputs.changed == 'true'
+        env:
+          SUMMARY: ${{ steps.sync.outputs.summary }}
+        run: |
+          set -e
+          git config --global user.name "Midway Ventures availability sync"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          # Preview build (noindexed)
+          SITE_URL=https://midwayventures.eaglewebcreation.com python3 tools/build_site.py > /dev/null
+          find preview-out -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r public/. preview-out/
+          # Production build back in place on main
+          python3 tools/build_site.py > /dev/null
+          python3 tools/verify.py | tail -2
+          git add site-config.json public
+          git commit -qm "Availability from CCStorage: $SUMMARY"
+          git push -q origin HEAD:main
+          cd preview-out
+          git add -A
+          git commit -qm "Preview: availability from CCStorage: $SUMMARY"
+          git push -q origin HEAD:preview
+          echo "Pushed: $SUMMARY"
