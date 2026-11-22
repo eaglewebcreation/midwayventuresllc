@@ -156,7 +156,7 @@ def iso_svg():
              f'<polygon class="wall" points="{pts((0, 0, 0), (0, D, 0), (0, D, H), (0, 0, H))}"/>')
     floor = f'<polygon class="floor" points="{pts((0, 0, 0), (W, 0, 0), (W, D, 0), (0, D, 0))}"/>'
     # floor drain: a square steel grate (about 1.5 ft) set flush where the slab's control joints cross mid-floor
-    jx, jy, g = W / 2, D / 2, 0.75
+    jx, jy, g = 12.0, D / 2, 0.75   # a third of the way across, so the parked pickup doesn't hide it
     joints = (f'<g class="joints"><line x1="{P(jx, 0)[0]:.1f}" y1="{P(jx, 0)[1]:.1f}" x2="{P(jx, D)[0]:.1f}" y2="{P(jx, D)[1]:.1f}"/>'
               f'<line x1="{P(0, jy)[0]:.1f}" y1="{P(0, jy)[1]:.1f}" x2="{P(W, jy)[0]:.1f}" y2="{P(W, jy)[1]:.1f}"/></g>')
     bars = "".join(
