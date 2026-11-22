@@ -436,9 +436,11 @@ def business_schema():
                                      "Storage closet", f'{S["h"]} ft ceilings',
                                      "Overhead door with WiFi app-controlled opener",
                                      "Water, sewer and trash included", "Floor drain", "Water spigot",
-                                     "220V outlet", "Online rental"]],
+                                     "220V outlet", "110V outlets", "24-hour access", "Online rental"]],
         "makesOffer": offer(),
     }
+    if K.get("sinceYear"):
+        s["foundingDate"] = str(K["sinceYear"])
     if K.get("email"):
         s["email"] = K["email"]
     if K.get("sameAs"):
@@ -568,7 +570,7 @@ def inside_list(h="h3"):
   <li><span class="ic">{ICON["office"]}</span><div><{h}>Private office</{h}><p>{office}</p></div></li>
   <li><span class="ic">{ICON["door"]}</span><div><{h}>Big overhead door</{h}><p>A clear opening about {S["mainDoorW"]} wide and {fact("doorHeight", "main door height")} tall, on a WiFi opener you run from your phone.</p></div></li>
   <li><span class="ic">{ICON["water"]}</span><div><{h}>Water, sewer and trash included</{h}><p>Plus a water spigot and a floor drain, so washing down parts and equipment is easy.</p></div></li>
-  <li><span class="ic">{ICON["plug"]}</span><div><{h}>220V outlet</{h}><p>Plug in the welder, the compressor or other big tools.</p></div></li>
+  <li><span class="ic">{ICON["plug"]}</span><div><{h}>220V outlet</{h}><p>Plug in the welder, the compressor or other big tools, with standard 110V outlets for everything else.</p></div></li>
 </ul>'''
 
 
@@ -621,13 +623,13 @@ FAQ = [
     ("Is the shop available right now?",
      f'<p>{"It was open to rent at our last check." if OPEN else "It was rented at our last check."} This site checks the rental page every hour, and the <a href="{RENT}">rental page</a> always has the current status.</p>', "available"),
     ("How long do I have to rent for?",
-     f'<p>{fact("leaseTerm", "lease term: month to month, or a minimum?")}</p>', "lease"),
+     (f'<p>The shop rents on a {html.escape(K["leaseTerm"])}.</p>' if K.get("leaseTerm") else f'<p>{ph("lease term: month to month, or a minimum?")}</p>'), "lease"),
     ("When can I get into the shop?",
-     f"<p>{access_html()}</p>", "access"),
+     (f"<p>Renters have {html.escape(K['accessHours'])} to the shop.</p>" if K.get("accessHours") else f"<p>{access_html()}</p>"), "access"),
     ("How big are the doors?",
      f"<p>{doors_html()}</p>", "door"),
     ("What power does the shop have?",
-     '<p>The shop has a 220V outlet for a welder, compressor or other big tools.<!-- TODO: confirm with owner: amps and other outlets --></p>', "power"),
+     '<p>The shop has one 220V outlet for a welder, compressor or other big tools, and standard 110V outlets for the rest.<!-- TODO: confirm with owner: amps on the 220V circuit --></p>', "power"),
     ("What utilities are included?",
      f'<p>{S["utilities"]} are included. The shop also has a water spigot and a floor drain.</p>', "utilities"),
     ("Where is the shop?",
