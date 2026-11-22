@@ -5,7 +5,8 @@
 - Never edit live files on Hostinger directly. Always go through this repo.
 - Only claim what the owner confirmed: heated, private bathroom, private office, 36 x 45 x 16 ft, plus the
   measurements in site-config.json taken from the building's floor plan. Never claim climate-controlled, gated,
-  cameras, lighting, door height, power or access hours until confirmed.
+  cameras, lighting or access hours until confirmed. Door size comes from the overhead door drawing Talon
+  sent (Nov 22, 2026); that drawing is private too and never goes in the repo or on the site.
 - The floor plan (sheet A-1) is copyrighted by its engineer and private. Never add it, a copy or a trace of it to
   this repo or the site. The drawing only places the office, bathroom, closet and doors as simple outlines.
 - No aggregateRating or Review schema. Reviews only word for word from real customers.

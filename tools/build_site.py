@@ -52,8 +52,8 @@ def fact(key, todo):
 
 
 def doors_html():
-    return (f'A {S["mainDoorW"]} wide main door (height: {fact("doorHeight", "main door height")}) '
-            f'and a {S["walkDoorW"]} walk-in door.')
+    return (f'An overhead main door with a clear opening about {S["mainDoorW"]} wide and {fact("doorHeight", "main door height")} tall, '
+            f'on a WiFi app-controlled opener, plus a {S["walkDoorW"]} walk-in door.')
 
 
 def minify_css(s):
@@ -74,6 +74,9 @@ ICON = {
     "floor": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M2 8l10-5 10 5-10 5z"/><path d="M2 8v8l10 5 10-5V8M12 13v8"/></svg>',
     "bath": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>',
     "office": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20h8M12 16v4"/></svg>',
+    "door": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 21V4h18v17"/><path d="M6 21V8h12v13M6 11h12M6 14h12M6 17h12"/></svg>',
+    "water": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3c3.5 4.5 6 7.8 6 11a6 6 0 0 1-12 0c0-3.2 2.5-6.5 6-11z"/></svg>',
+    "plug": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/></svg>',
     "camera": '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="4"/></svg>',
 }
 
@@ -167,8 +170,10 @@ def iso_svg():
              + lbl(5, D - 5, "OFFICE") + lbl(2.6, D - 12.8, "BATH") + "</g>")
     door_line = lambda x0, x1, cls: (f'<line class="{cls}" x1="{P(x0, D)[0]:.1f}" y1="{P(x0, D)[1]:.1f}" '
                                      f'x2="{P(x1, D)[0]:.1f}" y2="{P(x1, D)[1]:.1f}"/>')
-    doors = ('<g class="doors">' + door_line(19.3, 31.3, "door-main") + door_line(10.3, 13.3, "door-walk")
-             + lbl(25.3, D - 4.2, "12 FT DOOR") + "</g>")
+    dx0, dx1, dz = 19.5, 34.5, 14.875
+    doors = ('<g class="doors">' + door_line(dx0, dx1, "door-main") + door_line(10.3, 13.3, "door-walk")
+             + lbl(27, D - 4.2, "15 FT DOOR") + "</g>")
+    opening = f'<polygon class="door-open" points="{pts((dx0, D, 0), (dx1, D, 0), (dx1, D, dz), (dx0, D, dz))}"/>' 
     tx0, tx1, ty0, ty1 = 22.0, 28.7, 20.0, 39.5
     truck = (f'<g class="truck">{box(tx0, tx1, ty0, ty1, 0.9, 3.9)}{box(tx0 + .2, tx1 - .2, 28.0, 34.5, 3.9, 6.3)}'
              + "".join(f'<ellipse cx="{P(tx1, wy, 1.1)[0]:.1f}" cy="{P(tx1, wy, 1.1)[1]:.1f}" rx="7" ry="9" fill="#2a2e2a" transform="rotate(-30 {P(tx1, wy, 1.1)[0]:.1f} {P(tx1, wy, 1.1)[1]:.1f})"/>'
@@ -197,10 +202,10 @@ def iso_svg():
             + f'<text x="{P(W, 0, H / 2)[0] + 18:.1f}" y="{P(W, 0, H / 2)[1] + 5:.1f}">{H} FT</text>'
             + "</g>")
     label = (f"Drawing to scale of the Midway Ventures shop: {W} feet wide, {D} feet deep and {H} feet tall, "
-             f"with the {S['office']} office and {S['bath']} bathroom in a front corner, the {S['mainDoorW']} main door, "
+             f"with the {S['office']} office and {S['bath']} bathroom in a front corner, the overhead door about {S['mainDoorW']} wide and nearly 15 feet tall, "
              "a full-size pickup and a person about 5 feet 10 inches tall")
     return (f'<svg class="iso" viewBox="0 0 580 470" role="img" aria-label="{label}">'
-            f'{walls}{floor}{rooms}{doors}{heat}{truck}{person}{edges}{dims}</svg>')
+            f'{walls}{floor}{rooms}{doors}{heat}{truck}{person}{opening}{edges}{dims}</svg>')
 
 
 def status_html(cls=""):
@@ -390,8 +395,11 @@ def business_schema():
         "currenciesAccepted": "USD",
         "paymentAccepted": "Credit card, debit card, ACH bank draft",
         "amenityFeature": [{"@type": "LocationFeatureSpecification", "name": n, "value": True}
-                           for n in ["Heated", "Private bathroom", "Private office", f'{S["h"]} ft ceilings',
-                                     "Online rental"]],
+                           for n in ["Heated", "Natural gas forced-air furnace", "Private bathroom", "Private office",
+                                     "Storage closet", f'{S["h"]} ft ceilings',
+                                     "Overhead door with WiFi app-controlled opener",
+                                     "Water, sewer and trash included", "Floor drain", "Water spigot",
+                                     "220V outlet", "Online rental"]],
         "makesOffer": offer(),
     }
     if K.get("email"):
@@ -499,11 +507,14 @@ def inside_list(h="h3"):
     office = (f'Its own room with a door, apart from the shop floor. Size: {html.escape(K["officeSize"])}.'
               if K.get("officeSize") else f'Its own room with a door, apart from the shop floor. Size: {ph("office size")}')
     return f'''<ul class="inside">
-  <li class="hot"><span class="ic">{ICON["heat"]}</span><div><{h}>Heated</{h}><p>Work through a Wyoming winter without losing feeling in your hands. Paint, glue and gaskets get the warm room they need.</p></div></li>
+  <li class="hot"><span class="ic">{ICON["heat"]}</span><div><{h}>Heated</{h}><p>An overhead natural gas forced-air furnace keeps the shop warm through a Wyoming winter. Paint, glue and gaskets get the warm room they need.</p></div></li>
   <li><span class="ic">{ICON["height"]}</span><div><{h}>{S["h"]}-foot ceilings</{h}><p>Room overhead for lifting, tall racks, or a vehicle with something mounted on top.</p></div></li>
   <li><span class="ic">{ICON["floor"]}</span><div><{h}>{S["w"]} &times; {S["d"]} floor</{h}><p>About {SQFT:,} square feet inside the walls to lay out the way your work needs it.</p></div></li>
   <li><span class="ic">{ICON["bath"]}</span><div><{h}>Private bathroom</{h}><p>A {S["bath"]} restroom inside the building, so a long day in the shop doesn&rsquo;t mean leaving it.</p></div></li>
   <li><span class="ic">{ICON["office"]}</span><div><{h}>Private office</{h}><p>{office}</p></div></li>
+  <li><span class="ic">{ICON["door"]}</span><div><{h}>Big overhead door</{h}><p>A clear opening about {S["mainDoorW"]} wide and {fact("doorHeight", "main door height")} tall, on a WiFi opener you run from your phone.</p></div></li>
+  <li><span class="ic">{ICON["water"]}</span><div><{h}>Water, sewer and trash included</{h}><p>Plus a water spigot and a floor drain, so washing down parts and equipment is easy.</p></div></li>
+  <li><span class="ic">{ICON["plug"]}</span><div><{h}>220V outlet</{h}><p>Plug in the welder, the compressor or other big tools.</p></div></li>
 </ul>'''
 
 
@@ -546,7 +557,7 @@ FAQ = [
     ("How big is the shop?",
      f'<p>{S["w"]} by {S["d"]} feet on the building plans. Inside the walls it measures {S["insideW"]} by {S["insideD"]}, about {SQFT:,} square feet, with {S["h"]}-foot ceilings.</p>', "size"),
     ("Is the shop heated?",
-     "<p>Yes. The shop is heated, so it stays usable for work and storage through the winter.</p>", "heated"),
+     f"<p>Yes. An {K['heatType']} heats the shop, so it stays usable for work and storage through the winter.</p>", "heated"),
     ("Does the shop have a bathroom and an office?",
      f'<p>Yes, both are private and only for the renter of the shop. Office size: {fact("officeSize", "office size")}</p>', "bath-office"),
     ("How much is the rent?",
@@ -562,7 +573,9 @@ FAQ = [
     ("How big are the doors?",
      f"<p>{doors_html()}</p>", "door"),
     ("What power does the shop have?",
-     f'<p>{fact("power", "electrical service: 110 V outlets, 220 V, amps")}</p>', "power"),
+     '<p>The shop has a 220V outlet for a welder, compressor or other big tools.<!-- TODO: confirm with owner: amps and other outlets --></p>', "power"),
+    ("What utilities are included?",
+     f'<p>{S["utilities"]} are included. The shop also has a water spigot and a floor drain.</p>', "utilities"),
     ("Where is the shop?",
      f'<p>At {ADDR_LINE}, on the highway about 4 minutes west of downtown Lovell. <a href="{DIRECTIONS}">Get directions</a>.</p>', "where"),
 ]
@@ -649,7 +662,7 @@ def build_home():
          body, current="/")
 
 
-SHOP_FAQ = [FAQ[0], FAQ[2], FAQ[3], FAQ[8], FAQ[9]]
+SHOP_FAQ = [FAQ[0], FAQ[2], FAQ[3], FAQ[8], FAQ[9], FAQ[10]]
 
 
 def build_shop():
@@ -660,11 +673,13 @@ def build_shop():
         ("Inside the walls", f'{S["insideW"]} &times; {S["insideD"]}'),
         ("Floor area", f"About {SQFT:,} square feet inside the walls"),
         ("Ceiling height", f'{S["h"]} ft inside'),
-        ("Heat", "Yes, heated" + (f' ({html.escape(K["heatType"])})' if K.get("heatType") else '<!-- TODO: confirm with owner: type of heat -->')),
+        ("Heat", (f'Yes, {html.escape(K["heatType"])}' if K.get("heatType") else 'Yes, heated<!-- TODO: confirm with owner: type of heat -->')),
         ("Office", f"Private, {office}, with a window"),
         ("Bathroom", f'Private, {S["bath"]}'),
         ("Closet", S["closet"]),
         ("Doors", doors_html()),
+        ("Utilities included", S["utilities"]),
+        ("Water and drain", "A water spigot and a floor drain"),
         ("Power", fact("power", "electrical service")),
         ("Access", access_html()),
         ("Lease term", fact("leaseTerm", "lease term")),
@@ -815,9 +830,9 @@ TOWN_PAGES = {
         story_h="Winter repairs, done warm",
         story=["Around Cowley, winter is when the swather, the baler and the feed truck get fixed. Doing that in an unheated barn means stiff hands, slow work and parts that won't seal right. A heated building lets the work go at summer speed.",
                "A 36-foot-wide floor and a 16-foot ceiling leave room to walk all the way around a piece of equipment and still have space for the welder and the parts washer.",
-               "There's a private bathroom inside, so a long day of repairs doesn't mean trips back to the house."],
+               "There's a private bathroom inside, plus a water spigot and a floor drain for washing down equipment, so a long day of repairs doesn't mean trips back to the house."],
         faq=[("How far is the shop from Cowley?", "<p>About 4 minutes and 3.5 miles east on US-310, on the fastest Google Maps route.</p>", "cowley-far"),
-             ("How tall is the shop inside?", f'<p>{S["h"]} feet to the ceiling. Equipment comes in through the {S["mainDoorW"]}-wide main door; its height is {fact("doorHeight", "main door height")}</p>', "cowley-tall"),
+             ("How tall is the shop inside?", f'<p>{S["h"]} feet to the ceiling. Equipment rolls in through an overhead door about {S["mainDoorW"]} wide and {fact("doorHeight", "main door height")} tall.</p>', "cowley-tall"),
              ("Can I work in the shop through the winter?", "<p>Yes. The building is heated, which is the whole point for winter equipment work.</p>", "cowley-winter")],
         cta=("Get the equipment out of the cold", "A heated shop four minutes from Cowley. Rent it online."),
     ),
@@ -829,7 +844,7 @@ TOWN_PAGES = {
         intro="The truck you've been meaning to restore deserves better than a carport. This shop is about five minutes from Byron on US-14A.",
         route=["Leave Byron on US-14A toward Lovell", "Stay on the highway about 4.7 miles", "Watch for 1781 US Highway 310"],
         story_h="Room for the project and all its parts",
-        story=["Restoring an old pickup or rebuilding a motor takes months, and the parts pile up. At 36 by 45 feet there's room for the vehicle, a bench, the engine stand and shelves of parts without tripping over any of it.",
+        story=["Restoring an old pickup or rebuilding a motor takes months, and the parts pile up. At 36 by 45 feet there's room for the vehicle, a bench, the engine stand and shelves of parts without tripping over any of it, and a 220V outlet runs the welder.",
                "Heat matters most for this kind of work. Paint, body filler and gaskets all want a warm room, and you'll actually go out to the shop on a February evening when it isn't ten degrees inside.",
                "A bathroom to wash up in and an office for receipts and service manuals make it feel like your own place instead of a rented box."],
         faq=[("How long is the drive from Byron?", "<p>About 5 minutes and 4.7 miles on US-14A, on the fastest Google Maps route.</p>", "byron-far"),
@@ -861,7 +876,7 @@ TOWN_PAGES = {
         intro="Diesels that sit outside all night don't like a 20-below morning. A heated building keeps the work trucks ready, 36 minutes north of Greybull.",
         route=["Take US-310 north out of Greybull", "Follow it into Lovell", "Keep going west through town about 2.7 miles"],
         story_h="Keep the fleet warm and ready",
-        story=["For trucking, hauling and ag outfits around Greybull, cold starts cost time every winter morning. Parked inside a heated shop, the trucks fire up and the hydraulics move when you need them to.",
+        story=["For trucking, hauling and ag outfits around Greybull, cold starts cost time every winter morning. Parked inside a heated shop, the trucks fire up and the hydraulics move when you need them to. The overhead door's WiFi opener works from your phone.",
                "The 16-foot ceiling and the open floor leave space for vehicles plus a bench and parts shelving along the walls.",
                "The private office gives dispatch and paperwork a quiet corner, and the bathroom saves a trip off site."],
         faq=[("How far is the shop from Greybull?", "<p>About 36 minutes and 35.2 miles north on US-310, on the fastest Google Maps route.</p>", "greybull-far"),
@@ -881,8 +896,8 @@ TOWN_PAGES = {
                "Heat protects what you keep from the deep freezes, which matters for paint, liquids, electronics and anything else that doesn't like the cold.",
                "The private office is a place to work through orders with the stock right outside the door, and the bathroom makes a full day of counting inventory doable."],
         faq=[("How far is the shop from Basin?", "<p>About 44 minutes and 42.8 miles: north on US-16/20 to Greybull, then US-310 to Lovell.</p>", "basin-far"),
-             ("What does it work out to per square foot?", f'<p>${S["rent"]} a month for {SQFT:,} square feet is about {PER_SQFT} cents per square foot per month in base rent, before payment fees.</p>', "basin-sqft"),
-             ("Will the shop stay above freezing?", f'<p>The shop is heated. Heat type and setting: {fact("heatType", "type of heat and the temperature it holds")}</p>', "basin-freeze")],
+             ("What does it work out to per square foot?", f'<p>${S["rent"]} a month for {SQFT:,} square feet is about {PER_SQFT} cents per square foot per month in base rent, before payment fees. {S["utilities"]} are included.</p>', "basin-sqft"),
+             ("Will the shop stay above freezing?", f'<p>Yes. An {K["heatType"]} heats the shop through the deep freezes.</p>', "basin-freeze")],
         cta=("Give the stock a warm home", "Rent the shop online or call to talk it over."),
     ),
     "cody": dict(
@@ -893,7 +908,7 @@ TOWN_PAGES = {
         intro="When the tourists and hunters head home, a lot of Cody businesses need a warm place for the gear until spring. The shop is about 47 minutes east.",
         route=["Take US-14A east out of Cody to Powell", "Stay on US-14A through Byron", "Continue toward Lovell to 1781 US Highway 310"],
         story_h="Somewhere warm for the gear between seasons",
-        story=["Guides, outfitters and tour operators spend the winter fixing what the summer wore out: rafts, trailers, tack, coolers, side-by-sides. A heated 36 by 45 foot shop holds the whole outfit with room left over to work on it.",
+        story=["Guides, outfitters and tour operators spend the winter fixing what the summer wore out: rafts, trailers, tack, coolers, side-by-sides. A heated 36 by 45 foot shop holds the whole outfit with room left over to work on it, and the floor drain and water spigot make rinsing rafts and coolers easy.",
                "Sixteen-foot ceilings help when the gear stacks high, and the floor is open so you can lay it out the way you load it.",
                "Most owners only make the drive a few times a season, so 47 minutes is a fair trade for a heated building with its own bathroom and office."],
         faq=[("How far is the shop from Cody?", "<p>About 47 minutes and 43.4 miles east on US-14A through Powell, on the fastest Google Maps route.</p>", "cody-far"),
@@ -992,15 +1007,16 @@ def build_root_files():
 ## Shop facts (as of {AS_OF})
 - Size: {S["w"]} x {S["d"]} ft on the building plans; {S["insideW"]} x {S["insideD"]} inside the walls (about {SQFT:,} sq ft); {S["h"]} ft ceilings
 - Office: {S["office"]}, with a window; bathroom: {S["bath"]}; closet: {S["closet"]}
-- Doors: {S["mainDoorW"]} wide main door, {S["walkDoorW"]} walk-in door
-- Heated: yes
+- Doors: overhead main door, clear opening about {S["mainDoorW"]} wide x {K["doorHeight"]} tall, WiFi app-controlled opener; {S["walkDoorW"]} walk-in door
+- Heated: yes, {K["heatType"]}
+- Utilities included: {S["utilities"]}
+- Water spigot and floor drain: yes
+- Power: {K["power"]}
 - Private bathroom: yes
 - Private office: yes
 - Base rent: ${S["rent"]} per month before payment fees (the rental page adds about 1.75% for ACH or about 4% for card)
 - Status at last check: {"open to rent" if OPEN else "rented (waitlist)"}
 {known("officeSize", "Office size")}
-{known("doorHeight", "Main door height")}
-{known("power", "Power")}
 {known("accessHours", "Access hours")}
 {known("leaseTerm", "Lease term")}
 

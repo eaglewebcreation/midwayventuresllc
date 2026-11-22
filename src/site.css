@@ -358,3 +358,5 @@ strong{color:var(--ink)}
 .iso .door-walk{stroke:var(--g1);stroke-width:4;stroke-linecap:round}
 .iso .rooms,.iso .doors{animation:fade 1s ease 1.3s both}
 @media (prefers-reduced-motion:reduce){.iso .rooms,.iso .doors{animation:none}}
+.iso .door-open{fill:rgba(232,122,30,.08);stroke:var(--heat);stroke-width:1.4;stroke-dasharray:4 3;animation:fade 1s ease 1.3s both}
+@media (prefers-reduced-motion:reduce){.iso .door-open{animation:none}}
