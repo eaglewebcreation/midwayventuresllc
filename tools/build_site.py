@@ -645,8 +645,8 @@ def build_home():
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <span class="kicker">Shop space for rent &middot; US-310</span>
-      <h1 id="hero-h">A heated {S["w"]}&nbsp;&times;&nbsp;{S["d"]} shop <span class="accent">with its own bathroom and office</span></h1>
-      <p class="hero-sub">About {SQFT:,} square feet inside the walls, under a {S["h"]}-foot ceiling. Room for the trucks, the tools and the project you&rsquo;ve been putting off, and warm enough to work in all winter.</p>
+      <h1 id="hero-h">Your business, <span class="accent">under one roof</span></h1>
+      <p class="hero-sub">Shop floor, office and bathroom in one heated {S["w"]}&nbsp;&times;&nbsp;{S["d"]} building. Meet customers and do the work from an ideal highway-facing spot right on US Highway 310, with 24-hour access on a 12-month lease.</p>
       <div class="btn-row"><a class="btn btn-green" href="{RENT}">{ICON["key"]}{RENT_LABEL}</a><a class="btn btn-line" href="/the-shop/">See the details</a></div>
       <ul class="hero-points"><li>Heated</li><li>{S["h"]} ft ceilings</li><li>Rent online</li></ul>
     </div>
